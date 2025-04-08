@@ -2,9 +2,10 @@ streamlit
 pandas
 pdfplumber
 easyocr
+numpy
 opencv-python-headless
 sentence-transformers
 torch
 transformers
-numpy
-openpyxl
+openai
+
