@@ -8,21 +8,20 @@ import cv2
 import os
 from sentence_transformers import SentenceTransformer, util
 import re
-
-import sys
 import torch
+import sys
 
-# 🔧 Prevent torch class inspection issues with Streamlit watcher
+# Prevent torch::class_ error in Streamlit
 try:
     if hasattr(torch, "_classes"):
         torch._classes = sys.modules.get("torch._classes", {})
 except Exception:
     pass
 
-
 ssl._create_default_https_context = ssl._create_unverified_context
 
 st.set_page_config(page_title="SGEYE: AI Menu Magic", page_icon="📜", layout="wide")
+
 st.markdown("""
     <style>
     body { background-color: #121212; color: #FFFFFF; }
@@ -33,11 +32,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.video("assets/firefly.mp4", start_time=0, loop=True)
-
 st.image("sgeye.jpg", width=80)
 st.title("📜 SGEYE: AI Menu Magic")
 
-files = st.sidebar.file_uploader("📅 Upload Menus (PDF, Image, CSV, or XLSX)", type=["pdf", "png", "jpg", "jpeg", "csv", "xlsx"], accept_multiple_files=True)
+files = st.sidebar.file_uploader("🗕️ Upload Menus (PDF, Image, CSV, or XLSX)", type=["pdf", "png", "jpg", "jpeg", "csv", "xlsx"], accept_multiple_files=True)
 brand_file = st.sidebar.file_uploader("📊 Upload Brand List (CSV or XLSX)", type=["csv", "xlsx"])
 threshold = st.sidebar.slider("🔎 Transformer Similarity Threshold", 0, 100, 75, 1)
 
@@ -46,7 +44,8 @@ progress_placeholder = st.empty()
 
 @st.cache_resource
 def load_transformer_model():
-    return SentenceTransformer("all-MiniLM-L6-v2")
+    model_path = os.path.join(os.path.dirname(__file__), "all-MiniLM-L6-v2")
+    return SentenceTransformer(model_path)
 
 st_model = load_transformer_model()
 
@@ -111,9 +110,23 @@ def transformer_match(menu_lines, brand_names, brand_embeddings, threshold, sour
 
         if brand not in used_brands and score >= threshold:
             used_brands.add(brand)
-            matched_rows.append({"Source File": source_file_name, "Menu Item": line, "Matched Brand": brand, "Transformer Match Score": int(score), "Price": price, "Context": classify_context(line)})
+            matched_rows.append({
+                "Source File": source_file_name,
+                "Menu Item": line,
+                "Matched Brand": brand,
+                "Transformer Match Score": int(score),
+                "Price": price,
+                "Context": classify_context(line)
+            })
         else:
-            matched_rows.append({"Source File": source_file_name, "Menu Item": line, "Matched Brand": "No Match", "Transformer Match Score": 0, "Price": price, "Context": classify_context(line)})
+            matched_rows.append({
+                "Source File": source_file_name,
+                "Menu Item": line,
+                "Matched Brand": "No Match",
+                "Transformer Match Score": 0,
+                "Price": price,
+                "Context": classify_context(line)
+            })
 
     df = pd.DataFrame(matched_rows)
     matches = df[df["Matched Brand"] != "No Match"].sort_values(by="Transformer Match Score", ascending=False)
@@ -135,7 +148,6 @@ if files:
         else:
             brands_df = pd.read_csv(brand_file)
 
-        # Clean brand names to avoid float tokenization errors
         brand_names = brands_df["brand_name"].dropna().astype(str).tolist()
         brand_embeddings = st_model.encode(brand_names, convert_to_tensor=True)
 

@@ -7,6 +7,16 @@ from fuzzywuzzy import fuzz
 import json
 import io
 
+import sys
+import torch
+
+# 🛠 Patch Streamlit's inspection issue with torch.classes
+try:
+    if hasattr(torch, "_classes"):
+        torch._classes = sys.modules.get("torch._classes", {})
+except Exception as e:
+    pass  # ignore this entirely if torch is being weird
+
 # Load and display the image at 50% width
 st.image("sgeye.jpg", caption="A Vision For The Future", width=300)
 
