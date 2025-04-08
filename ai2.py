@@ -31,7 +31,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.video("assets/firefly.mp4", start_time=0, loop=True)
+# ✅ Use YouTube-hosted video instead of local video
+st.markdown("""
+<iframe width="100%" height="400" 
+src="https://www.youtube.com/embed/MCjZAtgkrHM?autoplay=1&mute=1&loop=1&playlist=MCjZAtgkrHM" 
+title="SGEYE Demo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+</iframe>
+""", unsafe_allow_html=True)
+
 st.image("sgeye.jpg", width=80)
 st.title("📜 SGEYE: AI Menu Magic")
 
