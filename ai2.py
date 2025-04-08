@@ -9,6 +9,17 @@ import os
 from sentence_transformers import SentenceTransformer, util
 import re
 
+import sys
+import torch
+
+# 🔧 Prevent torch class inspection issues with Streamlit watcher
+try:
+    if hasattr(torch, "_classes"):
+        torch._classes = sys.modules.get("torch._classes", {})
+except Exception:
+    pass
+
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 st.set_page_config(page_title="SGEYE: AI Menu Magic", page_icon="📜", layout="wide")
@@ -21,8 +32,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.video("/Users/jules/Desktop/sgeye/firefly.mp4", start_time=0, loop=True)
-#st.video("/Users/Jules.Gerard/Desktop/jules_sgeye.mp4", start_time=0, loop=True)
+st.video("assets/firefly.mp4", start_time=0, loop=True)
 
 st.image("sgeye.jpg", width=80)
 st.title("📜 SGEYE: AI Menu Magic")
