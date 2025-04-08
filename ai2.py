@@ -45,15 +45,14 @@ progress_placeholder = st.empty()
 
 @st.cache_resource
 def load_transformer_model():
-    model_path = os.path.join(os.path.dirname(__file__), "all-MiniLM-L6-v2")
-    return SentenceTransformer(model_path)
+    return SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 @st.cache_resource
 def load_ocr_reader():
     return easyocr.Reader(['en'], model_storage_directory='models', download_enabled=False)
 
 st_model = load_transformer_model()
-reader = easyocr.Reader(['en'], model_storage_directory='models')
+reader = load_ocr_reader()
 
 def show_temperature_bar(percentage):
     progress_placeholder.progress(percentage / 100.0, text=f"Processing... {percentage}%")
