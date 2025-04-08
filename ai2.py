@@ -31,13 +31,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ✅ Use YouTube-hosted video instead of local video
-st.markdown("""
-<iframe width="100%" height="400" 
-src="https://www.youtube.com/embed/MCjZAtgkrHM?autoplay=1&mute=1&loop=1&playlist=MCjZAtgkrHM" 
-title="SGEYE Demo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
-</iframe>
-""", unsafe_allow_html=True)
+# Use a YouTube-hosted video instead of local video for compatibility
+st.video("https://youtu.be/MCjZAtgkrHM", start_time=0)
 
 st.image("sgeye.jpg", width=80)
 st.title("📜 SGEYE: AI Menu Magic")
@@ -46,7 +41,6 @@ files = st.sidebar.file_uploader("🗕️ Upload Menus (PDF, Image, CSV, or XLSX
 brand_file = st.sidebar.file_uploader("📊 Upload Brand List (CSV or XLSX)", type=["csv", "xlsx"])
 threshold = st.sidebar.slider("🔎 Transformer Similarity Threshold", 0, 100, 75, 1)
 
-reader = easyocr.Reader(['en'])
 progress_placeholder = st.empty()
 
 @st.cache_resource
@@ -54,7 +48,12 @@ def load_transformer_model():
     model_path = os.path.join(os.path.dirname(__file__), "all-MiniLM-L6-v2")
     return SentenceTransformer(model_path)
 
+@st.cache_resource
+def load_ocr_reader():
+    return easyocr.Reader(['en'], model_storage_directory='models', download_enabled=False)
+
 st_model = load_transformer_model()
+reader = easyocr.Reader(['en'], model_storage_directory='models')
 
 def show_temperature_bar(percentage):
     progress_placeholder.progress(percentage / 100.0, text=f"Processing... {percentage}%")
