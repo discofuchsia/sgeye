@@ -1,11 +1,10 @@
-streamlit>=1.25
+streamlit
 pandas
 pdfplumber
 easyocr
 opencv-python-headless
 sentence-transformers
 torch
+transformers
 numpy
-scikit-learn
-Pillow
 openpyxl

@@ -6,10 +6,10 @@ import ssl
 import numpy as np
 import cv2
 import os
-from sentence_transformers import SentenceTransformer, util
 import re
 import torch
 import sys
+from sentence_transformers import SentenceTransformer, util
 
 # Prevent torch::class_ error in Streamlit
 try:
@@ -31,10 +31,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Autoplay embedded YouTube video using iframe
-st.components.v1.html("""
-<iframe width="100%" height="400" src="https://www.youtube.com/embed/MCjZAtgkrHM?autoplay=1&mute=1&loop=1&playlist=MCjZAtgkrHM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-""", height=400)
+# Embedded autoplay YouTube video (Streamlit does not natively support autoplay on YouTube, this is workaround via iframe)
+st.components.v1.html(
+    '<iframe width="100%" height="315" src="https://www.youtube.com/embed/MCjZAtgkrHM?autoplay=1&mute=1&loop=1&playlist=MCjZAtgkrHM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>',
+    height=330
+)
 
 st.image("sgeye.jpg", width=80)
 st.title("📜 SGEYE: AI Menu Magic")
@@ -47,12 +48,11 @@ progress_placeholder = st.empty()
 
 @st.cache_resource
 def load_transformer_model():
-    model_path = os.path.join("models", "all-MiniLM-L6-v2")
-    return SentenceTransformer(model_path)
+    return SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 @st.cache_resource
 def load_ocr_reader():
-    return easyocr.Reader(['en'], model_storage_directory='models', download_enabled=False)
+    return easyocr.Reader(['en'])
 
 st_model = load_transformer_model()
 reader = load_ocr_reader()
